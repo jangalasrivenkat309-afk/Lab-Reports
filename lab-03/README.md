@@ -223,21 +223,6 @@ During the hands-on debugging segment, four critical backend defects were evalua
 
 ---
 
-## Viva Voce Questions & Answers
-
-**Q1: What is the fundamental difference between a query parameter and a path parameter?**  
-- **Path Parameter:** Part of the core URL hierarchy (e.g., `/books/5`), strictly required to identify a specific unique resource.
-- **Query Parameter:** Appended after the `?` character (e.g., `/books?order_by=price`), optional modifiers used to filter, sort, paginate, or format a collection of resources without altering the route definition.
-
-**Q2: What is meant by the term 'Stateless' in RESTful API architecture?**  
-- In a stateless protocol, every incoming client request contains complete, self-sufficient context (credentials, identifiers, data) needed for the server to process it. The server stores no conversational session state between requests, allowing easy horizontal scaling and high fault tolerance.
-
-**Q3: Which HTTP status code should be used for invalid user input versus a missing record?**  
-- **`400 Bad Request`:** Used when the client submits syntactically invalid data, missing required fields, or fails schema validation rules.
-- **`404 Not Found`:** Used when the request syntax is valid, but the target resource identifier does not match any existing record in the database.
-
----
-
 ## Deployment Configuration
 
 - **Platform:** Render
