@@ -3,7 +3,7 @@
 //  Course   : Backend Development Fundamentals (Year II Term II) · Aurora
 //  Faculty  : Joel Prashanth D
 //  Student  : JANGALA SRIVENKAT
-//  Reg No   : 252U1R80332
+//  Reg No   : 252U1R8032
 //  Section  : CSE(QE)-2A-113
 // ==============================================================================
 
@@ -59,7 +59,7 @@ app.get("/", (req, res) => {
     message: "Lab 3 RESTful Books API is live and operational",
     developer: {
       studentName: "JANGALA SRIVENKAT",
-      registrationNo: "252U1R80332",
+      registrationNo: "252U1R8032",
       section: "113"
     },
     availableRoutes: {
@@ -416,7 +416,7 @@ export async function initializeDatabaseAndServer() {
       console.log(`\n======================================================`);
       console.log(`🚀 REST API Server running at http://localhost:${SERVER_PORT}`);
       console.log(`📁 Connected to SQLite Database: ${databaseFile}`);
-      console.log(`👤 Student: JANGALA SRIVENKAT (252U1R80332, Section 113)`);
+      console.log(`👤 Student: JANGALA SRIVENKAT (252U1R8032, Section 113)`);
       console.log(`======================================================\n`);
     });
   } catch (initializationError) {

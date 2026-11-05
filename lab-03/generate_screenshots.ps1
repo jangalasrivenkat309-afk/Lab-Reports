@@ -3,7 +3,7 @@
 # Renders high-fidelity Postman and Terminal screenshots for Lab 03
 # Course   : Backend Development Fundamentals · Year II Term II · Aurora
 # Faculty  : Joel Prashanth D
-# Student  : JANGALA SRIVENKAT (Reg No: 252U1R80332, Section: 113)
+# Student  : JANGALA SRIVENKAT (Reg No: 252U1R8032, Section: 113)
 # ==============================================================================
 
 Add-Type -AssemblyName System.Drawing
@@ -12,7 +12,7 @@ $outDir = "C:\Users\bunny\OneDrive\Desktop\BACKEND-LABS\lab-03\screenshots"
 if (!(Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force }
 
 $studentName = "JANGALA SRIVENKAT"
-$regNo = "252U1R80332"
+$regNo = "252U1R8032"
 $section = "113"
 
 function Draw-PostmanWindow {

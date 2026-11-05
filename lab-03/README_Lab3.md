@@ -1,7 +1,7 @@
 # Lab 3: REST API, Query Parameters, Validation and Debugging
 
 **Project:** Books Catalog REST API  
-**Developer:** JANGALA SRIVENKAT (Reg No: 252U1R80332, Section: 113)  
+**Developer:** JANGALA SRIVENKAT (Reg No: 252U1R8032, Section: 113)  
 **Course:** Backend Development Fundamentals (Year II Term II) · Aurora  
 **Faculty:** Joel Prashanth D  
 **Stack:** Node.js (ES Modules), Express.js, SQLite (`sqlite` + `sqlite3`)

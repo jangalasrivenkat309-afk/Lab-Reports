@@ -3,7 +3,7 @@
 ## Student Information
 
 - **Name:** JANGALA SRIVENKAT
-- **Registration Number:** 252U1R80332
+- **Registration Number:** 252U1R8032
 - **Section:** CSE(QE)-2A-113
 - **Course:** Backend Development Fundamentals (Year II Term II)
 - **Faculty:** Joel Prashanth D
@@ -152,7 +152,7 @@ All error responses consistently return a standardized JSON structure:
 
 ## Postman Evidence Screenshots
 
-Screenshots generated and verified with student credentials (**JANGALA SRIVENKAT | Reg: 252U1R80332 | Sec: 113**):
+Screenshots generated and verified with student credentials (**JANGALA SRIVENKAT | Reg: 252U1R8032 | Sec: 113**):
 
 ### 1. Fetch All Books (`GET /books`)
 ![Get all books](screenshots/get-all-books-1.png)

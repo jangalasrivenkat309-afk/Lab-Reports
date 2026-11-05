@@ -1,6 +1,6 @@
 // ==============================================================================
 //  test_routes.js - Automated Verification Suite for Lab 03 REST API
-//  Student : JANGALA SRIVENKAT (252U1R80332, Section: 113)
+//  Student : JANGALA SRIVENKAT (252U1R8032, Section: 113)
 // ==============================================================================
 
 import http from "http";
@@ -60,7 +60,7 @@ function verifyCondition(testTitle, assertionResult) {
 async function startTestSuite() {
   console.log("\n==============================================================");
   console.log("  Lab 03 - Automated API Test Runner");
-  console.log("  Target: JANGALA SRIVENKAT (252U1R80332) - Books REST API");
+  console.log("  Target: JANGALA SRIVENKAT (252U1R8032) - Books REST API");
   console.log("==============================================================\n");
 
   // 1. Root Route
