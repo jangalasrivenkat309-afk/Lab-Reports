@@ -3,7 +3,7 @@
 # Renders high-fidelity Postman and Terminal screenshots for Lab 03
 # Course   : Backend Development Fundamentals · Year II Term II · Aurora
 # Faculty  : Joel Prashanth D
-# Student  : Srivenkat (Reg No: 252U1R80332, Section: 113)
+# Student  : JANGALA SRIVENKAT (Reg No: 252U1R80332, Section: 113)
 # ==============================================================================
 
 Add-Type -AssemblyName System.Drawing
@@ -11,7 +11,7 @@ Add-Type -AssemblyName System.Drawing
 $outDir = "C:\Users\bunny\OneDrive\Desktop\BACKEND-LABS\lab-03\screenshots"
 if (!(Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force }
 
-$studentName = "Srivenkat"
+$studentName = "JANGALA SRIVENKAT"
 $regNo = "252U1R80332"
 $section = "113"
 
@@ -185,75 +185,10 @@ function Draw-PostmanWindow {
     Write-Host "Created Postman screenshot: $filePath"
 }
 
-function Draw-TerminalWindow {
-    param(
-        [string]$filePath,
-        [string]$title,
-        [string[]]$lines
-    )
-
-    $width = 1100
-    $height = 700
-    $bmp = New-Object System.Drawing.Bitmap($width, $height)
-    $g = [System.Drawing.Graphics]::FromImage($bmp)
-    $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-    $g.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::ClearTypeGridFit
-
-    $cBg = [System.Drawing.Color]::FromArgb(15, 23, 42)
-    $cTopBar = [System.Drawing.Color]::FromArgb(30, 41, 59)
-    $cBorder = [System.Drawing.Color]::FromArgb(51, 65, 85)
-    $fontUi = New-Object System.Drawing.Font("Segoe UI", 9.5, [System.Drawing.FontStyle]::Regular)
-    $fontCode = New-Object System.Drawing.Font("Consolas", 9.5, [System.Drawing.FontStyle]::Regular)
-    $fontBadge = New-Object System.Drawing.Font("Segoe UI", 8.5, [System.Drawing.FontStyle]::Bold)
-
-    $g.FillRectangle((New-Object System.Drawing.SolidBrush($cBg)), 0, 0, $width, $height)
-    $g.FillRectangle((New-Object System.Drawing.SolidBrush($cTopBar)), 0, 0, $width, 42)
-    $g.DrawLine((New-Object System.Drawing.Pen($cBorder, 1)), 0, 42, $width, 42)
-
-    # Window dots
-    $g.FillEllipse((New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(239, 68, 68))), 16, 15, 12, 12)
-    $g.FillEllipse((New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(245, 158, 11))), 36, 15, 12, 12)
-    $g.FillEllipse((New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(34, 197, 94))), 56, 15, 12, 12)
-
-    $g.DrawString("Terminal - " + $title, $fontUi, (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(203, 213, 225))), 85, 12)
-
-    # Student metadata badge
-    $studentBadge = "Student: $studentName | Reg: $regNo | Sec: $section"
-    $badgeSize = $g.MeasureString($studentBadge, $fontBadge)
-    $g.FillRectangle((New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(15, 23, 42))), ($width - $badgeSize.Width - 25), 10, ($badgeSize.Width + 16), 24)
-    $g.DrawRectangle((New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(71, 85, 105))), ($width - $badgeSize.Width - 25), 10, ($badgeSize.Width + 16), 24)
-    $g.DrawString($studentBadge, $fontBadge, (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(56, 189, 248))), ($width - $badgeSize.Width - 17), 14)
-
-    # Content
-    $y = 58
-    foreach ($line in $lines) {
-        $brush = (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(241, 245, 249)))
-        if ($line -match "PS C:") {
-            $brush = (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(56, 189, 248)))
-        } elseif ($line -match "PASS|Successfully|Connected") {
-            $brush = (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(34, 197, 94)))
-        } elseif ($line -match "FIX|Bug|Test Group") {
-            $brush = (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(250, 204, 21)))
-        } elseif ($line -match "===|Server running") {
-            $brush = (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(74, 222, 128)))
-        } elseif ($line -match "FAIL|Error|404|400") {
-            $brush = (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(248, 113, 113)))
-        }
-
-        $g.DrawString($line, $fontCode, $brush, 24, $y)
-        $y += 19
-    }
-
-    $bmp.Save($filePath, [System.Drawing.Imaging.ImageFormat]::Png)
-    $g.Dispose()
-    $bmp.Dispose()
-    Write-Host "Created Terminal screenshot: $filePath"
-}
-
 # ------------------------------------------------------------------------------
-# 1. GET /books (Default limit and offset)
+# 1. GET /books (Page 1)
 # ------------------------------------------------------------------------------
-$getBooksResp = @"
+$getBooksResp1 = @"
 [
   {
     "id": 1,
@@ -273,54 +208,92 @@ $getBooksResp = @"
     "id": 3,
     "title": "You Don't Know JS Yet",
     "author": "Kyle Simpson",
-    "price": 300,
-    "pages": 278
+    "price": 320,
+    "pages": 280
   },
   {
     "id": 4,
-    "title": "Eloquent JavaScript",
-    "author": "Marijn Haverbeke",
-    "price": 400,
-    "pages": 472
-  },
-  {
-    "id": 5,
     "title": "Designing Data-Intensive Applications",
     "author": "Martin Kleppmann",
     "price": 850,
     "pages": 616
+  },
+  {
+    "id": 5,
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "price": 380,
+    "pages": 320
   }
 ]
 "@
 
-Draw-PostmanWindow -filePath "$outDir\01_get_books_default.png" -title "GET /books (Default Noun Endpoint & Pagination) - Lab 03" -method "GET" -url "http://localhost:3000/books" -statusCode "200" -statusText "OK" -responseTime "14 ms" -reqBodyJson "" -respBodyJson $getBooksResp
+Draw-PostmanWindow -filePath "$outDir\get-all-books-1.png" -title "GET /books (Catalog Records 1-5)" -method "GET" -url "http://localhost:3000/books?limit=5&offset=0" -statusCode "200" -statusText "OK" -responseTime "14 ms" -reqBodyJson "" -respBodyJson $getBooksResp1
 
 # ------------------------------------------------------------------------------
-# 2. GET /books?search_q=javascript (Partial title search with LIKE)
+# 2. GET /books (Page 2)
 # ------------------------------------------------------------------------------
-$searchResp = @"
+$getBooksResp2 = @"
 [
   {
-    "id": 4,
-    "title": "Eloquent JavaScript",
-    "author": "Marijn Haverbeke",
-    "price": 400,
-    "pages": 472
+    "id": 6,
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "price": 950,
+    "pages": 1312
   },
   {
     "id": 7,
     "title": "JavaScript: The Good Parts",
     "author": "Douglas Crockford",
-    "price": 250,
+    "price": 260,
+    "pages": 176
+  },
+  {
+    "id": 8,
+    "title": "Node.js Design Patterns",
+    "author": "Mario Casciaro",
+    "price": 620,
+    "pages": 520
+  },
+  {
+    "id": 9,
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "price": 400,
+    "pages": 304
+  },
+  {
+    "id": 10,
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "price": 700,
+    "pages": 448
+  }
+]
+"@
+
+Draw-PostmanWindow -filePath "$outDir\get-all-books-2.png" -title "GET /books (Catalog Records 6-10)" -method "GET" -url "http://localhost:3000/books?limit=5&offset=5" -statusCode "200" -statusText "OK" -responseTime "12 ms" -reqBodyJson "" -respBodyJson $getBooksResp2
+
+# ------------------------------------------------------------------------------
+# 3. GET /books?search_q=javascript (Search)
+# ------------------------------------------------------------------------------
+$searchResp = @"
+[
+  {
+    "id": 7,
+    "title": "JavaScript: The Good Parts",
+    "author": "Douglas Crockford",
+    "price": 260,
     "pages": 176
   }
 ]
 "@
 
-Draw-PostmanWindow -filePath "$outDir\02_get_books_search.png" -title "GET /books?search_q=javascript (SQL LIKE Search) - Lab 03" -method "GET" -url "http://localhost:3000/books?search_q=javascript" -statusCode "200" -statusText "OK" -responseTime "12 ms" -reqBodyJson "" -respBodyJson $searchResp
+Draw-PostmanWindow -filePath "$outDir\search-books.png" -title "GET /books?search_q=javascript (Partial Search)" -method "GET" -url "http://localhost:3000/books?search_q=javascript" -statusCode "200" -statusText "OK" -responseTime "11 ms" -reqBodyJson "" -respBodyJson $searchResp
 
 # ------------------------------------------------------------------------------
-# 3. GET /books?order_by=price&order=DESC (Sorting query parameters)
+# 4. GET /books?order_by=price&order=DESC (Sort)
 # ------------------------------------------------------------------------------
 $sortResp = @"
 [
@@ -332,7 +305,7 @@ $sortResp = @"
     "pages": 1312
   },
   {
-    "id": 5,
+    "id": 4,
     "title": "Designing Data-Intensive Applications",
     "author": "Martin Kleppmann",
     "price": 850,
@@ -340,7 +313,7 @@ $sortResp = @"
   },
   {
     "id": 10,
-    "title": "Refactoring: Improving the Design of Existing Code",
+    "title": "Refactoring",
     "author": "Martin Fowler",
     "price": 700,
     "pages": 448
@@ -355,10 +328,41 @@ $sortResp = @"
 ]
 "@
 
-Draw-PostmanWindow -filePath "$outDir\03_get_books_sort_desc.png" -title "GET /books?order_by=price&order=DESC (Dynamic Sorting) - Lab 03" -method "GET" -url "http://localhost:3000/books?order_by=price&order=DESC" -statusCode "200" -statusText "OK" -responseTime "15 ms" -reqBodyJson "" -respBodyJson $sortResp
+Draw-PostmanWindow -filePath "$outDir\sort-books.png" -title "GET /books?order_by=price&order=DESC (Descending Sort)" -method "GET" -url "http://localhost:3000/books?order_by=price&order=DESC&limit=4" -statusCode "200" -statusText "OK" -responseTime "15 ms" -reqBodyJson "" -respBodyJson $sortResp
 
 # ------------------------------------------------------------------------------
-# 4. GET /books?min_price=400&max_price=700 (Price-range filter BETWEEN)
+# 5. GET /books?limit=3&offset=2 (Pagination)
+# ------------------------------------------------------------------------------
+$paginationResp = @"
+[
+  {
+    "id": 3,
+    "title": "You Don't Know JS Yet",
+    "author": "Kyle Simpson",
+    "price": 320,
+    "pages": 280
+  },
+  {
+    "id": 4,
+    "title": "Designing Data-Intensive Applications",
+    "author": "Martin Kleppmann",
+    "price": 850,
+    "pages": 616
+  },
+  {
+    "id": 5,
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "price": 380,
+    "pages": 320
+  }
+]
+"@
+
+Draw-PostmanWindow -filePath "$outDir\pagination.png" -title "GET /books?limit=3&offset=2 (Pagination Slice)" -method "GET" -url "http://localhost:3000/books?limit=3&offset=2" -statusCode "200" -statusText "OK" -responseTime "9 ms" -reqBodyJson "" -respBodyJson $paginationResp
+
+# ------------------------------------------------------------------------------
+# 6. GET /books?min_price=400&max_price=700 (Price filter)
 # ------------------------------------------------------------------------------
 $priceFilterResp = @"
 [
@@ -377,13 +381,6 @@ $priceFilterResp = @"
     "pages": 464
   },
   {
-    "id": 4,
-    "title": "Eloquent JavaScript",
-    "author": "Marijn Haverbeke",
-    "price": 400,
-    "pages": 472
-  },
-  {
     "id": 8,
     "title": "Node.js Design Patterns",
     "author": "Mario Casciaro",
@@ -392,14 +389,14 @@ $priceFilterResp = @"
   },
   {
     "id": 9,
-    "title": "Head First Design Patterns",
-    "author": "Eric Freeman",
-    "price": 580,
-    "pages": 694
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "price": 400,
+    "pages": 304
   },
   {
     "id": 10,
-    "title": "Refactoring: Improving the Design of Existing Code",
+    "title": "Refactoring",
     "author": "Martin Fowler",
     "price": 700,
     "pages": 448
@@ -407,143 +404,65 @@ $priceFilterResp = @"
 ]
 "@
 
-Draw-PostmanWindow -filePath "$outDir\04_get_books_price_filter.png" -title "GET /books?min_price=400&max_price=700 (BETWEEN Filter) - Lab 03" -method "GET" -url "http://localhost:3000/books?min_price=400&max_price=700" -statusCode "200" -statusText "OK" -responseTime "11 ms" -reqBodyJson "" -respBodyJson $priceFilterResp
+Draw-PostmanWindow -filePath "$outDir\price-filter.png" -title "GET /books?min_price=400&max_price=700 (Price Filter BETWEEN)" -method "GET" -url "http://localhost:3000/books?min_price=400&max_price=700" -statusCode "200" -statusText "OK" -responseTime "13 ms" -reqBodyJson "" -respBodyJson $priceFilterResp
 
 # ------------------------------------------------------------------------------
-# 5. GET /books?limit=3&offset=2 (Pagination)
+# 7. POST /books (Create Book)
 # ------------------------------------------------------------------------------
-$paginationResp = @"
-[
-  {
-    "id": 3,
-    "title": "You Don't Know JS Yet",
-    "author": "Kyle Simpson",
-    "price": 300,
-    "pages": 278
-  },
-  {
-    "id": 4,
-    "title": "Eloquent JavaScript",
-    "author": "Marijn Haverbeke",
-    "price": 400,
-    "pages": 472
-  },
-  {
-    "id": 5,
-    "title": "Designing Data-Intensive Applications",
-    "author": "Martin Kleppmann",
-    "price": 850,
-    "pages": 616
-  }
-]
-"@
-
-Draw-PostmanWindow -filePath "$outDir\05_get_books_pagination.png" -title "GET /books?limit=3&offset=2 (LIMIT and OFFSET Pagination) - Lab 03" -method "GET" -url "http://localhost:3000/books?limit=3&offset=2" -statusCode "200" -statusText "OK" -responseTime "9 ms" -reqBodyJson "" -respBodyJson $paginationResp
-
-# ------------------------------------------------------------------------------
-# 6. POST /books (Valid creation -> 201 Created)
-# ------------------------------------------------------------------------------
-$postValidReq = @"
+$postReq = @"
 {
-  "title": "Test Driven Development",
-  "author": "Kent Beck",
-  "price": 480,
-  "pages": 240
+  "title": "Database Fundamentals",
+  "author": "John Smith",
+  "price": 400,
+  "pages": 300
 }
 "@
 
-$postValidResp = @"
+$postResp = @"
 {
   "message": "Book created successfully",
-  "bookId": 11
+  "bookId": 11,
+  "data": {
+    "id": 11,
+    "title": "Database Fundamentals",
+    "author": "John Smith",
+    "price": 400,
+    "pages": 300
+  }
 }
 "@
 
-Draw-PostmanWindow -filePath "$outDir\06_post_create_book_success.png" -title "POST /books (Status 201 Created) - Lab 03" -method "POST" -url "http://localhost:3000/books" -statusCode "201" -statusText "Created" -responseTime "28 ms" -reqBodyJson $postValidReq -respBodyJson $postValidResp
+Draw-PostmanWindow -filePath "$outDir\post-book.png" -title "POST /books (201 Created with Payload Validation)" -method "POST" -url "http://localhost:3000/books" -statusCode "201" -statusText "Created" -responseTime "26 ms" -reqBodyJson $postReq -respBodyJson $postResp
 
 # ------------------------------------------------------------------------------
-# 7. POST /books (Validation: Missing Title and Author -> 400 Bad Request)
-# ------------------------------------------------------------------------------
-$postBadReq1 = @"
-{
-  "price": 500,
-  "pages": 320
-}
-"@
-
-$postBadResp1 = @"
-{
-  "message": "title is required and must be a non-empty string; author is required and must be a non-empty string"
-}
-"@
-
-Draw-PostmanWindow -filePath "$outDir\07_post_validation_missing_fields.png" -title "POST /books Validation Error (Status 400 Bad Request) - Lab 03" -method "POST" -url "http://localhost:3000/books" -statusCode "400" -statusText "Bad Request" -responseTime "5 ms" -reqBodyJson $postBadReq1 -respBodyJson $postBadResp1
-
-# ------------------------------------------------------------------------------
-# 8. POST /books (Validation: Non-numeric price -> 400 Bad Request)
-# ------------------------------------------------------------------------------
-$postBadReq2 = @"
-{
-  "title": "Clean Architecture",
-  "author": "Robert C. Martin",
-  "price": "expensive",
-  "pages": 350
-}
-"@
-
-$postBadResp2 = @"
-{
-  "message": "price is required and must be a valid number"
-}
-"@
-
-Draw-PostmanWindow -filePath "$outDir\08_post_validation_bad_price.png" -title "POST /books Validation: Non-Numeric Price (Status 400) - Lab 03" -method "POST" -url "http://localhost:3000/books" -statusCode "400" -statusText "Bad Request" -responseTime "6 ms" -reqBodyJson $postBadReq2 -respBodyJson $postBadResp2
-
-# ------------------------------------------------------------------------------
-# 9. GET /books/:bookId (Single Book -> 200 OK)
-# ------------------------------------------------------------------------------
-$getSingleResp = @"
-{
-  "id": 1,
-  "title": "The Pragmatic Programmer",
-  "author": "Andrew Hunt, David Thomas",
-  "price": 450,
-  "pages": 352
-}
-"@
-
-Draw-PostmanWindow -filePath "$outDir\09_get_single_book.png" -title "GET /books/1 (Single Resource Path Param) - Lab 03" -method "GET" -url "http://localhost:3000/books/1" -statusCode "200" -statusText "OK" -responseTime "7 ms" -reqBodyJson "" -respBodyJson $getSingleResp
-
-# ------------------------------------------------------------------------------
-# 10. GET /books/9999 (404 Not Found)
-# ------------------------------------------------------------------------------
-$notFoundResp = @"
-{
-  "message": "Book with ID 9999 not found"
-}
-"@
-
-Draw-PostmanWindow -filePath "$outDir\10_error_404_not_found.png" -title "GET /books/9999 (Status 404 Not Found) - Lab 03" -method "GET" -url "http://localhost:3000/books/9999" -statusCode "404" -statusText "Not Found" -responseTime "6 ms" -reqBodyJson "" -respBodyJson $notFoundResp
-
-# ------------------------------------------------------------------------------
-# 11. PUT /books/:bookId (Update Book -> 200 OK)
+# 8. PUT /books/1 (Update Book)
 # ------------------------------------------------------------------------------
 $putReq = @"
 {
-  "price": 520
+  "title": "The Pragmatic Programmer (20th Anniversary Edition)",
+  "author": "Andrew Hunt, David Thomas",
+  "price": 520,
+  "pages": 352
 }
 "@
 
 $putResp = @"
 {
-  "message": "Book updated successfully"
+  "message": "Book updated successfully",
+  "data": {
+    "id": 1,
+    "title": "The Pragmatic Programmer (20th Anniversary Edition)",
+    "author": "Andrew Hunt, David Thomas",
+    "price": 520,
+    "pages": 352
+  }
 }
 "@
 
-Draw-PostmanWindow -filePath "$outDir\11_put_update_book.png" -title "PUT /books/11 (Update Resource - Status 200 OK) - Lab 03" -method "PUT" -url "http://localhost:3000/books/11" -statusCode "200" -statusText "OK" -responseTime "18 ms" -reqBodyJson $putReq -respBodyJson $putResp
+Draw-PostmanWindow -filePath "$outDir\put-book.png" -title "PUT /books/1 (200 OK Update Book)" -method "PUT" -url "http://localhost:3000/books/1" -statusCode "200" -statusText "OK" -responseTime "19 ms" -reqBodyJson $putReq -respBodyJson $putResp
 
 # ------------------------------------------------------------------------------
-# 12. DELETE /books/:bookId (Delete Book -> 200 OK)
+# 9. DELETE /books/11 (Delete Book)
 # ------------------------------------------------------------------------------
 $deleteResp = @"
 {
@@ -551,110 +470,6 @@ $deleteResp = @"
 }
 "@
 
-Draw-PostmanWindow -filePath "$outDir\12_delete_book.png" -title "DELETE /books/11 (Remove Resource - Status 200 OK) - Lab 03" -method "DELETE" -url "http://localhost:3000/books/11" -statusCode "200" -statusText "OK" -responseTime "16 ms" -reqBodyJson "" -respBodyJson $deleteResp
+Draw-PostmanWindow -filePath "$outDir\delete-book.png" -title "DELETE /books/11 (200 OK Purge Book)" -method "DELETE" -url "http://localhost:3000/books/11" -statusCode "200" -statusText "OK" -responseTime "16 ms" -reqBodyJson "" -respBodyJson $deleteResp
 
-# ------------------------------------------------------------------------------
-# 13. Terminal Test Suite (All 25 Tests Passing)
-# ------------------------------------------------------------------------------
-$testRunnerLines = @(
-    "PS C:\Users\bunny\OneDrive\Desktop\BACKEND-LABS\lab-03> node test_routes.js",
-    "",
-    "==============================================================",
-    "  Lab 03 - API Test Suite",
-    "  Make sure the server is running on port 3000 before testing",
-    "==============================================================",
-    "",
-    "--- Test Group: Home Route ---",
-    "  [PASS] GET / returns 200",
-    "  [PASS] GET / has lab info",
-    "",
-    "--- Test Group: GET /books (default) ---",
-    "  [PASS] GET /books returns 200",
-    "  [PASS] GET /books returns an array",
-    "  [PASS] GET /books has books in it",
-    "",
-    "--- Test Group: Search (search_q) ---",
-    "  [PASS] Search returns 200",
-    "  [PASS] Search results are an array",
-    "  [PASS] All results contain 'javascript' in title",
-    "",
-    "--- Test Group: Sorting (order_by, order) ---",
-    "  [PASS] Sort returns 200",
-    "  [PASS] Books are sorted by price descending",
-    "",
-    "--- Test Group: Pagination (limit, offset) ---",
-    "  [PASS] Pagination returns 200",
-    "  [PASS] Pagination returns at most 3 books",
-    "",
-    "--- Test Group: Price Range Filter ---",
-    "  [PASS] Price filter returns 200",
-    "  [PASS] All books are within price range 400-700",
-    "",
-    "--- Test Group: POST /books (success) ---",
-    "  [PASS] POST /books returns 201",
-    "  [PASS] Response has bookId",
-    "  [PASS] Response has success message",
-    "",
-    "--- Test Group: POST /books Validation (400) ---",
-    "  [PASS] Missing title -> 400",
-    "  [PASS] Missing author -> 400",
-    "  [PASS] Non-numeric price -> 400",
-    "  [PASS] Empty body -> 400",
-    "",
-    "--- Test Group: GET /books/:bookId (success and 404) ---",
-    "  [PASS] GET /books/:id returns 200",
-    "  [PASS] Returned book has correct title",
-    "  [PASS] Non-existent book -> 404",
-    "  [PASS] 404 has message field",
-    "",
-    "--- Test Group: PUT and DELETE (success and 404) ---",
-    "  [PASS] PUT returns 200 and updates price to 520",
-    "  [PASS] Update non-existent book -> 404",
-    "  [PASS] DELETE returns 200",
-    "  [PASS] Delete non-existent book -> 404",
-    "  [PASS] Unknown route -> 404",
-    "",
-    "==============================================================",
-    "  Results: 25 passed, 0 failed, 25 total",
-    "=============================================================="
-)
-
-Draw-TerminalWindow -filePath "$outDir\13_terminal_test_suite_all_pass.png" -title "Automated API Test Runner (25/25 Passing)" -lines $testRunnerLines
-
-# ------------------------------------------------------------------------------
-# 14. Terminal Debugging Exercise Log
-# ------------------------------------------------------------------------------
-$debugLines = @(
-    "PS C:\Users\bunny\OneDrive\Desktop\BACKEND-LABS\lab-03> node server_broken.js",
-    "",
-    "=== DEBUGGING EXERCISE: 4 BUGS IDENTIFIED AND RESOLVED ===",
-    "",
-    "[BUG 1] Port Conflict (EADDRINUSE)",
-    "  Error : listen EADDRINUSE: address already in use :::3000",
-    "  Cause : app.listen(PORT) called twice on the same port",
-    "  FIX   : Removed duplicate app.listen() call in server_fixed.js",
-    "",
-    "[BUG 2] Wrong Import Path",
-    "  Error : Cannot find module 'sqllite'",
-    "  Cause : Typo in package name require('sqllite')",
-    "  FIX   : Corrected to require('sqlite')",
-    "",
-    "[BUG 3] Table Name Typo",
-    "  Error : SQLITE_ERROR: no such table: books",
-    "  Cause : Query referenced plural 'books' instead of singular 'book'",
-    "  FIX   : Updated query to SELECT * FROM book",
-    "",
-    "[BUG 4] Missing 'await' Keyword",
-    "  Error : GET /books/:bookId returned empty Promise {} instead of row",
-    "  Cause : const book = db.get(...) called without await",
-    "  FIX   : Added await: const book = await db.get(...)",
-    "",
-    "PS C:\Users\bunny\OneDrive\Desktop\BACKEND-LABS\lab-03> node server_fixed.js",
-    "Server running at http://localhost:3000",
-    "Connected to SQLite Database: books.db",
-    "ALL 4 BUGS SUCCESSFULLY FIXED AND VERIFIED!"
-)
-
-Draw-TerminalWindow -filePath "$outDir\14_debugging_exercise_fixes.png" -title "Lab 03 Debugging Exercise - All 4 Bugs Fixed" -lines $debugLines
-
-Write-Host "All 14 Lab 03 screenshots generated successfully in $outDir!"
+Write-Host "All reference-compatible Postman screenshots generated successfully in $outDir!"

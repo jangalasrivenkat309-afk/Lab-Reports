@@ -1,13 +1,23 @@
 {
   "name": "lab-03",
   "version": "1.0.0",
-  "description": "Lab 3: REST API, query parameters, validation, debugging - Backend Development Fundamentals",
-  "main": "server.js",
+  "description": "Lab 3: REST API, Query Parameters, Validation and Debugging - Backend Development Fundamentals",
+  "main": "app.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "node test_routes.js"
   },
+  "keywords": [
+    "express",
+    "rest-api",
+    "sqlite",
+    "validation",
+    "backend"
+  ],
+  "author": "Jangala Srivenkat",
+  "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
     "sqlite": "^5.1.1",

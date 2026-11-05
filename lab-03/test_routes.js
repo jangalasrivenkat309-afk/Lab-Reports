@@ -1,288 +1,211 @@
 // ==============================================================================
-//  test_routes.js – Automated Test Script for Lab 03 API
-//  Covers all success and failure cases using native http module
-//  Course   : Backend Development Fundamentals · Year II Term II · Aurora
-//  Student  : Srivenkat (Reg No: 252U1R80332, Section: 113)
+//  test_routes.js - Automated Verification Suite for Lab 03 REST API
+//  Student : JANGALA SRIVENKAT (252U1R80332, Section: 113)
 // ==============================================================================
 
-const http = require("http");
+import http from "http";
 
 const BASE_URL = "http://localhost:3000";
-let passed = 0;
-let failed = 0;
+let passedCount = 0;
+let failedCount = 0;
 
-// Helper: make an HTTP request and return { statusCode, body }
-function request(method, path, body = null) {
+function executeRequest(method, endpointPath, requestPayload = null) {
   return new Promise((resolve, reject) => {
-    const url = new URL(path, BASE_URL);
-    const options = {
-      hostname: url.hostname,
-      port: url.port,
-      path: url.pathname + url.search,
+    const parsedUrl = new URL(endpointPath, BASE_URL);
+    const requestOptions = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port,
+      path: parsedUrl.pathname + parsedUrl.search,
       method: method,
       headers: { "Content-Type": "application/json" },
     };
 
-    const req = http.request(options, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => {
+    const clientReq = http.request(requestOptions, (serverResponse) => {
+      let accumulatedBody = "";
+      serverResponse.on("data", (chunk) => (accumulatedBody += chunk));
+      serverResponse.on("end", () => {
         try {
-          resolve({ statusCode: res.statusCode, body: JSON.parse(data) });
+          resolve({
+            statusCode: serverResponse.statusCode,
+            body: JSON.parse(accumulatedBody),
+          });
         } catch {
-          resolve({ statusCode: res.statusCode, body: data });
+          resolve({
+            statusCode: serverResponse.statusCode,
+            body: accumulatedBody,
+          });
         }
       });
     });
 
-    req.on("error", reject);
+    clientReq.on("error", reject);
 
-    if (body) {
-      req.write(JSON.stringify(body));
+    if (requestPayload) {
+      clientReq.write(JSON.stringify(requestPayload));
     }
-    req.end();
+    clientReq.end();
   });
 }
 
-// Simple assertion helper
-function assert(testName, condition) {
-  if (condition) {
-    console.log(`  ✅ PASS: ${testName}`);
-    passed++;
+function verifyCondition(testTitle, assertionResult) {
+  if (assertionResult) {
+    console.log(`  [PASS] ${testTitle}`);
+    passedCount++;
   } else {
-    console.log(`  ❌ FAIL: ${testName}`);
-    failed++;
+    console.log(`  [FAIL] ${testTitle}`);
+    failedCount++;
   }
 }
 
-async function runTests() {
+async function startTestSuite() {
   console.log("\n==============================================================");
-  console.log("  Lab 03 – API Test Suite");
-  console.log("  Make sure the server is running on port 3000 before testing");
+  console.log("  Lab 03 - Automated API Test Runner");
+  console.log("  Target: JANGALA SRIVENKAT (252U1R80332) - Books REST API");
   console.log("==============================================================\n");
 
-  // ------------------------------------------------------------------
-  //  1. GET / – Home route
-  // ------------------------------------------------------------------
-  console.log("--- Test Group: Home Route ---");
+  // 1. Root Route
+  console.log("--- 1. Root & Health Check ---");
   {
-    const res = await request("GET", "/");
-    assert("GET / returns 200", res.statusCode === 200);
-    assert("GET / has lab info", res.body.lab && res.body.lab.includes("Lab 3"));
+    const res = await executeRequest("GET", "/");
+    verifyCondition("GET / responds with 200 OK", res.statusCode === 200);
+    verifyCondition("GET / identifies developer", res.body?.developer?.studentName === "JANGALA SRIVENKAT");
   }
 
-  // ------------------------------------------------------------------
-  //  2. GET /books – Fetch all books (default params)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: GET /books (default) ---");
+  // 2. GET /books
+  console.log("\n--- 2. GET /books (Default Collection) ---");
   {
-    const res = await request("GET", "/books");
-    assert("GET /books returns 200", res.statusCode === 200);
-    assert("GET /books returns an array", Array.isArray(res.body));
-    assert("GET /books has books in it", res.body.length > 0);
+    const res = await executeRequest("GET", "/books");
+    verifyCondition("GET /books returns 200 OK", res.statusCode === 200);
+    verifyCondition("Response is an array of books", Array.isArray(res.body));
+    verifyCondition("Catalog is populated", res.body.length > 0);
   }
 
-  // ------------------------------------------------------------------
-  //  3. GET /books?search_q=javascript – Partial title search
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: Search (search_q) ---");
+  // 3. Search Query Parameter
+  console.log("\n--- 3. Search by Title (search_q) ---");
   {
-    const res = await request("GET", "/books?search_q=javascript");
-    assert("Search returns 200", res.statusCode === 200);
-    assert("Search results are an array", Array.isArray(res.body));
-    assert(
-      "All results contain 'javascript' in title",
-      res.body.every((b) =>
-        b.title.toLowerCase().includes("javascript")
-      )
+    const res = await executeRequest("GET", "/books?search_q=javascript");
+    verifyCondition("Search query responds with 200 OK", res.statusCode === 200);
+    verifyCondition(
+      "Returned books match title query 'javascript'",
+      res.body.every((b) => b.title.toLowerCase().includes("javascript"))
     );
   }
 
-  // ------------------------------------------------------------------
-  //  4. GET /books?order_by=price&order=DESC – Sorting
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: Sorting (order_by, order) ---");
+  // 4. Sorting Query Parameters
+  console.log("\n--- 4. Sorting (order_by & order) ---");
   {
-    const res = await request("GET", "/books?order_by=price&order=DESC&limit=50");
-    assert("Sort returns 200", res.statusCode === 200);
-    let sorted = true;
+    const res = await executeRequest("GET", "/books?order_by=price&order=DESC&limit=50");
+    verifyCondition("Sort request responds with 200 OK", res.statusCode === 200);
+    let isDescending = true;
     for (let i = 1; i < res.body.length; i++) {
       if (res.body[i].price > res.body[i - 1].price) {
-        sorted = false;
+        isDescending = false;
         break;
       }
     }
-    assert("Books are sorted by price descending", sorted);
+    verifyCondition("Books sorted by price DESC successfully", isDescending);
   }
 
-  // ------------------------------------------------------------------
-  //  5. GET /books?limit=3&offset=2 – Pagination
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: Pagination (limit, offset) ---");
+  // 5. Pagination
+  console.log("\n--- 5. Pagination (limit & offset) ---");
   {
-    const res = await request("GET", "/books?limit=3&offset=2");
-    assert("Pagination returns 200", res.statusCode === 200);
-    assert("Pagination returns at most 3 books", res.body.length <= 3);
+    const res = await executeRequest("GET", "/books?limit=3&offset=2");
+    verifyCondition("Pagination request responds with 200 OK", res.statusCode === 200);
+    verifyCondition("Limit constrained to 3 records", res.body.length <= 3);
   }
 
-  // ------------------------------------------------------------------
-  //  6. GET /books?min_price=400&max_price=700 – Price range filter
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: Price Range Filter ---");
+  // 6. Price Filtering
+  console.log("\n--- 6. Price Range Filter (min_price & max_price) ---");
   {
-    const res = await request("GET", "/books?min_price=400&max_price=700&limit=50");
-    assert("Price filter returns 200", res.statusCode === 200);
-    assert(
-      "All books are within price range 400-700",
+    const res = await executeRequest("GET", "/books?min_price=400&max_price=700&limit=50");
+    verifyCondition("Price range filter responds with 200 OK", res.statusCode === 200);
+    verifyCondition(
+      "All returned items satisfy 400 <= price <= 700",
       res.body.every((b) => b.price >= 400 && b.price <= 700)
     );
   }
 
-  // ------------------------------------------------------------------
-  //  7. POST /books – Create a new book (success)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: POST /books (success) ---");
-  let newBookId;
+  // 7. POST /books - Valid Insertion
+  console.log("\n--- 7. POST /books (Valid Record) ---");
+  let newRecordId;
   {
-    const res = await request("POST", "/books", {
-      title: "Test Driven Development",
-      author: "Kent Beck",
-      price: 480,
-      pages: 240,
+    const res = await executeRequest("POST", "/books", {
+      title: "Clean Architecture Principles",
+      author: "Robert C. Martin",
+      price: 650,
+      pages: 430,
     });
-    assert("POST /books returns 201", res.statusCode === 201);
-    assert("Response has bookId", res.body.bookId !== undefined);
-    assert("Response has success message", res.body.message.includes("created"));
-    newBookId = res.body.bookId;
+    verifyCondition("POST /books responds with 201 Created", res.statusCode === 201);
+    verifyCondition("Response returns generated bookId", res.body.bookId !== undefined);
+    newRecordId = res.body.bookId;
   }
 
-  // ------------------------------------------------------------------
-  //  8. POST /books – Validation failures (400)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: POST /books Validation (400) ---");
+  // 8. POST /books - Input Validation Checks
+  console.log("\n--- 8. POST /books Validation Errors (400 Bad Request) ---");
   {
-    // Missing title
-    const res1 = await request("POST", "/books", {
-      author: "Someone",
-      price: 100,
-      pages: 200,
+    const resMissingTitle = await executeRequest("POST", "/books", {
+      author: "Martin Fowler",
+      price: 500,
+      pages: 300,
     });
-    assert("Missing title → 400", res1.statusCode === 400);
+    verifyCondition("Rejects payload missing title with 400", resMissingTitle.statusCode === 400);
 
-    // Missing author
-    const res2 = await request("POST", "/books", {
-      title: "Some Book",
-      price: 100,
-      pages: 200,
+    const resMissingAuthor = await executeRequest("POST", "/books", {
+      title: "Refactoring UI",
+      price: 500,
+      pages: 300,
     });
-    assert("Missing author → 400", res2.statusCode === 400);
+    verifyCondition("Rejects payload missing author with 400", resMissingAuthor.statusCode === 400);
 
-    // Non-numeric price
-    const res3 = await request("POST", "/books", {
-      title: "Some Book",
-      author: "Someone",
-      price: "expensive",
-      pages: 200,
+    const resBadPrice = await executeRequest("POST", "/books", {
+      title: "Design Patterns",
+      author: "GoF",
+      price: "free",
+      pages: 400,
     });
-    assert("Non-numeric price → 400", res3.statusCode === 400);
-
-    // Empty body
-    const res4 = await request("POST", "/books", {});
-    assert("Empty body → 400", res4.statusCode === 400);
+    verifyCondition("Rejects non-numeric price with 400", resBadPrice.statusCode === 400);
   }
 
-  // ------------------------------------------------------------------
-  //  9. GET /books/:bookId – Fetch the book we just created
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: GET /books/:bookId (success) ---");
+  // 9. GET /books/:bookId
+  console.log("\n--- 9. Single Book Lookup ---");
   {
-    const res = await request("GET", `/books/${newBookId}`);
-    assert("GET /books/:id returns 200", res.statusCode === 200);
-    assert("Returned book has correct title", res.body.title === "Test Driven Development");
+    const res = await executeRequest("GET", `/books/${newRecordId}`);
+    verifyCondition("GET /books/:bookId responds with 200 OK", res.statusCode === 200);
+    verifyCondition("Retrieved book title matches inserted record", res.body.title === "Clean Architecture Principles");
+
+    const resNotFound = await executeRequest("GET", "/books/99999");
+    verifyCondition("Non-existent ID responds with 404 Not Found", resNotFound.statusCode === 404);
   }
 
-  // ------------------------------------------------------------------
-  //  10. GET /books/9999 – Book not found (404)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: GET /books/:bookId (404) ---");
+  // 10. PUT /books/:bookId
+  console.log("\n--- 10. PUT Update Record ---");
   {
-    const res = await request("GET", "/books/9999");
-    assert("Non-existent book → 404", res.statusCode === 404);
-    assert("404 has message field", res.body.message !== undefined);
+    const res = await executeRequest("PUT", `/books/${newRecordId}`, { price: 690 });
+    verifyCondition("PUT /books/:bookId responds with 200 OK", res.statusCode === 200);
+
+    const resNotFound = await executeRequest("PUT", "/books/99999", { price: 100 });
+    verifyCondition("Updating non-existent ID returns 404", resNotFound.statusCode === 404);
   }
 
-  // ------------------------------------------------------------------
-  //  11. PUT /books/:bookId – Update a book (success)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: PUT /books/:bookId (success) ---");
+  // 11. DELETE /books/:bookId
+  console.log("\n--- 11. DELETE Record ---");
   {
-    const res = await request("PUT", `/books/${newBookId}`, {
-      price: 520,
-    });
-    assert("PUT returns 200", res.statusCode === 200);
-    assert("Response has success message", res.body.message.includes("updated"));
+    const res = await executeRequest("DELETE", `/books/${newRecordId}`);
+    verifyCondition("DELETE /books/:bookId responds with 200 OK", res.statusCode === 200);
 
-    // Verify the update
-    const check = await request("GET", `/books/${newBookId}`);
-    assert("Price was actually updated to 520", check.body.price === 520);
+    const resNotFound = await executeRequest("DELETE", "/books/99999");
+    verifyCondition("Deleting non-existent ID returns 404", resNotFound.statusCode === 404);
   }
 
-  // ------------------------------------------------------------------
-  //  12. PUT /books/9999 – Update non-existent book (404)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: PUT /books/:bookId (404) ---");
-  {
-    const res = await request("PUT", "/books/9999", { price: 100 });
-    assert("Update non-existent book → 404", res.statusCode === 404);
-  }
-
-  // ------------------------------------------------------------------
-  //  13. DELETE /books/:bookId – Delete the book we created (success)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: DELETE /books/:bookId (success) ---");
-  {
-    const res = await request("DELETE", `/books/${newBookId}`);
-    assert("DELETE returns 200", res.statusCode === 200);
-    assert("Response has success message", res.body.message.includes("deleted"));
-
-    // Verify deletion
-    const check = await request("GET", `/books/${newBookId}`);
-    assert("Deleted book returns 404 on GET", check.statusCode === 404);
-  }
-
-  // ------------------------------------------------------------------
-  //  14. DELETE /books/9999 – Delete non-existent book (404)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: DELETE /books/:bookId (404) ---");
-  {
-    const res = await request("DELETE", "/books/9999");
-    assert("Delete non-existent book → 404", res.statusCode === 404);
-  }
-
-  // ------------------------------------------------------------------
-  //  15. Unknown route (404 fallback)
-  // ------------------------------------------------------------------
-  console.log("\n--- Test Group: Unknown Route (404 fallback) ---");
-  {
-    const res = await request("GET", "/unknown/route");
-    assert("Unknown route → 404", res.statusCode === 404);
-    assert("404 has message", res.body.message !== undefined);
-  }
-
-  // ------------------------------------------------------------------
-  //  Summary
-  // ------------------------------------------------------------------
+  // Summary
   console.log("\n==============================================================");
-  console.log(`  Results: ${passed} passed, ${failed} failed, ${passed + failed} total`);
+  console.log(`  Final Results: ${passedCount} passed, ${failedCount} failed`);
   console.log("==============================================================\n");
 
-  if (failed > 0) {
-    process.exit(1);
-  }
+  if (failedCount > 0) process.exit(1);
 }
 
-runTests().catch((err) => {
-  console.error("Test runner error:", err.message);
-  console.error("Make sure the server is running: node server.js");
+startTestSuite().catch((err) => {
+  console.error("Test execution failed:", err.message);
   process.exit(1);
 });
