@@ -1,3 +1,4 @@
-// Fallback entry point if Render root directory is not set to lab-01
-require('./lab-01/server.js');
-
+// Fallback root entry point redirecting to lab-03
+import('./lab-03/app.js').catch((err) => {
+  console.error('Failed to start lab-03 from root server.js:', err.message);
+});
