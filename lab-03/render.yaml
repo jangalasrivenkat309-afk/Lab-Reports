@@ -2,6 +2,6 @@ services:
   - type: web
     name: jangala-books-api-lab3
     runtime: node
-    buildCommand: npm install
+    buildCommand: npm install --no-audit --no-fund
     startCommand: npm start
     healthCheckPath: /
